@@ -1,28 +1,300 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-	<title>krpano - IMG_20250104_112502_00_merged</title>
+	<title>360 Tour with 2D Map Navigation</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
 	<meta name="apple-mobile-web-app-capable" content="yes" />
 	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
 	<meta name="mobile-web-app-capable" content="yes" />
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 	<meta http-equiv="x-ua-compatible" content="IE=edge" />
+	
+	<!-- Simple Map Fallback CSS -->
+	<style>
+		.simple-map {
+			background: #34495e;
+			position: relative;
+			overflow: hidden;
+		}
+		
+		.map-marker {
+			position: absolute;
+			width: 12px;
+			height: 12px;
+			background: #2ecc71;
+			border: 2px solid white;
+			border-radius: 50%;
+			transform: translate(-50%, -50%);
+			cursor: pointer;
+			box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+		}
+		
+		.current-marker {
+			width: 16px;
+			height: 16px;
+			background: #3498db;
+			border: 3px solid white;
+		}
+		
+		.map-track {
+			position: absolute;
+			stroke: #e74c3c;
+			stroke-width: 3;
+			fill: none;
+		}
+		
+		.map-grid {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			opacity: 0.1;
+			background-image: 
+				linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px);
+			background-size: 20px 20px;
+		}
+		
+		.map-controls {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			z-index: 1000;
+		}
+		
+		.map-controls button {
+			display: block;
+			width: 30px;
+			height: 30px;
+			margin-bottom: 5px;
+			background: rgba(52, 73, 94, 0.9);
+			border: 1px solid #5a6c7d;
+			color: #ecf0f1;
+			cursor: pointer;
+			border-radius: 3px;
+			font-size: 16px;
+		}
+		
+		.map-controls button:hover {
+			background: rgba(52, 73, 94, 1);
+		}
+	</style>
+	
 	<style>
 		html { height:100%; }
-		body { height:100%; overflow:hidden; margin:0; padding:0; font-family:Arial, Helvetica, sans-serif; font-size:16px; color:#FFFFFF; background-color:#000000; }
+		body { 
+			height:100%; 
+			overflow:hidden; 
+			margin:0; 
+			padding:0; 
+			font-family:Arial, Helvetica, sans-serif; 
+			font-size:16px; 
+			color:#FFFFFF; 
+			background-color:#000000; 
+		}
+		
+		.container {
+			display: flex;
+			height: 100vh;
+			width: 100vw;
+		}
+		
+		.pano-container {
+			flex: 1;
+			position: relative;
+			min-width: 60%;
+		}
+		
+		.map-container {
+			width: 40%;
+			min-width: 300px;
+			background: #2c3e50;
+			display: flex;
+			flex-direction: column;
+		}
+		
+		.controls {
+			background: #34495e;
+			padding: 10px;
+			border-bottom: 1px solid #5a6c7d;
+		}
+		
+		.controls h3 {
+			margin: 0 0 10px 0;
+			color: #ecf0f1;
+			font-size: 14px;
+		}
+		
+		.control-group {
+			margin-bottom: 10px;
+		}
+		
+		.control-group label {
+			display: block;
+			color: #bdc3c7;
+			font-size: 12px;
+			margin-bottom: 5px;
+		}
+		
+		.control-group input,
+		.control-group select {
+			width: 100%;
+			padding: 5px;
+			border: 1px solid #5a6c7d;
+			border-radius: 3px;
+			background: #2c3e50;
+			color: #ecf0f1;
+			font-size: 12px;
+		}
+		
+		.control-group button {
+			background: #3498db;
+			color: white;
+			border: none;
+			padding: 8px 12px;
+			border-radius: 3px;
+			cursor: pointer;
+			font-size: 12px;
+			margin-right: 5px;
+		}
+		
+		.control-group button:hover {
+			background: #2980b9;
+		}
+		
+		#map {
+			flex: 1;
+			min-height: 300px;
+		}
+		
+		.info-panel {
+			background: #34495e;
+			padding: 10px;
+			border-top: 1px solid #5a6c7d;
+			max-height: 150px;
+			overflow-y: auto;
+		}
+		
+		.info-panel h4 {
+			margin: 0 0 5px 0;
+			color: #ecf0f1;
+			font-size: 12px;
+		}
+		
+		.info-panel p {
+			margin: 0 0 5px 0;
+			color: #bdc3c7;
+			font-size: 11px;
+		}
+		
+		/* Responsive design */
+		@media (max-width: 768px) {
+			.container {
+				flex-direction: column;
+			}
+			
+			.pano-container {
+				height: 60%;
+				min-width: auto;
+			}
+			
+			.map-container {
+				width: 100%;
+				height: 40%;
+			}
+		}
+		
+		/* Loading indicator */
+		.loading {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			color: #ecf0f1;
+			text-align: center;
+		}
+		
+		.loading::after {
+			content: '';
+			display: inline-block;
+			width: 20px;
+			height: 20px;
+			border: 3px solid #3498db;
+			border-radius: 50%;
+			border-top-color: transparent;
+			animation: spin 1s ease-in-out infinite;
+			margin-left: 10px;
+		}
+		
+		@keyframes spin {
+			to { transform: rotate(360deg); }
+		}
 	</style>
 </head>
 <body>
 
+<!-- Simple Map JavaScript (fallback) -->
+<script src="simple-map.js"></script>
+
 <script src="tour.js"></script>
 
-<div id="pano" style="width:100%;height:100%;">
-	<noscript><table style="width:100%;height:100%;"><tr style="vertical-align:middle;"><td><div style="text-align:center;">ERROR:<br/><br/>Javascript not activated<br/><br/></div></td></tr></table></noscript>
-	<script>
-		embedpano({xml:"tour.xml", target:"pano", passQueryParameters:"startscene,startlookat"});
-	</script>
+<div class="container">
+	<div class="pano-container">
+		<div id="pano" style="width:100%;height:100%;">
+			<noscript><table style="width:100%;height:100%;"><tr style="vertical-align:middle;"><td><div style="text-align:center;">ERROR:<br/><br/>Javascript not activated<br/><br/></div></td></tr></table></noscript>
+			<script>
+				embedpano({xml:"tour.xml", target:"pano", passQueryParameters:"startscene,startlookat"});
+			</script>
+		</div>
+	</div>
+	
+	<div class="map-container">
+		<div class="controls">
+			<h3>Navigation & Media Controls</h3>
+			
+			<div class="control-group">
+				<label>Media Type:</label>
+				<select id="mediaType">
+					<option value="image">360° Images</option>
+					<option value="video">360° Videos</option>
+				</select>
+			</div>
+			
+			<div class="control-group">
+				<label>GPX Track:</label>
+				<input type="file" id="gpxFile" accept=".gpx" />
+				<button onclick="loadSampleGPX()">Load Sample Track</button>
+			</div>
+			
+			<div class="control-group">
+				<button onclick="toggleAutoFollow()">Auto Follow</button>
+				<button onclick="centerOnCurrentLocation()">Center View</button>
+			</div>
+		</div>
+		
+		<div id="map" class="simple-map">
+			<div class="map-grid"></div>
+			<div class="map-controls">
+				<button onclick="window.tour360?.zoomIn()" title="Zoom In">+</button>
+				<button onclick="window.tour360?.zoomOut()" title="Zoom Out">-</button>
+				<button onclick="window.tour360?.centerOnCurrentLocation()" title="Center">⌖</button>
+			</div>
+			<svg id="mapSvg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></svg>
+			<div class="loading">Loading map...</div>
+		</div>
+		
+		<div class="info-panel">
+			<h4>Current Location</h4>
+			<p id="currentLocation">Loading...</p>
+			<p id="currentOrientation">Orientation: N/A</p>
+			<p id="currentElevation">Elevation: N/A</p>
+		</div>
+	</div>
 </div>
+
+<!-- Custom JavaScript for 2D/360 integration -->
+<script src="360-map-integration.js"></script>
 
 </body>
 </html>

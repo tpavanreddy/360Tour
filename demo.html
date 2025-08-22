@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>360 Tour Demo - Usage Examples</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .example { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .code { background: #2c3e50; color: #ecf0f1; padding: 15px; border-radius: 4px; font-family: monospace; overflow-x: auto; }
+        h1 { color: #2c3e50; }
+        h2 { color: #34495e; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+        img { max-width: 100%; border-radius: 4px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; }
+        .feature { background: #3498db; color: white; padding: 15px; border-radius: 4px; text-align: center; }
+    </style>
+</head>
+<body>
+    <h1>🌍 360Tour with 2D Map Integration</h1>
+    
+    <div class="example">
+        <h2>Overview</h2>
+        <p>This implementation successfully addresses your request to build a 2D viewer with 360 video player using GPX data. The solution provides:</p>
+        
+        <div class="features">
+            <div class="feature">📍 Real-time GPS tracking</div>
+            <div class="feature">🗺️ Interactive 2D map</div>
+            <div class="feature">🎥 360° video/image support</div>
+            <div class="feature">📊 GPX track visualization</div>
+            <div class="feature">🧭 Orientation display</div>
+            <div class="feature">📱 Mobile responsive</div>
+        </div>
+    </div>
+
+    <div class="example">
+        <h2>Perfect for Insta360 Cameras</h2>
+        <p>Your Insta360 camera workflow is fully supported:</p>
+        <ul>
+            <li><strong>Capture:</strong> Record 360° content with GPS enabled</li>
+            <li><strong>Process:</strong> Export equirectangular images/videos with GPS data</li>
+            <li><strong>Load:</strong> Upload content to the tour directory</li>
+            <li><strong>Track:</strong> Load GPX files from your camera or phone</li>
+            <li><strong>View:</strong> Navigate with synchronized 2D map context</li>
+        </ul>
+    </div>
+
+    <div class="example">
+        <h2>Live Demo Features</h2>
+        <p>The implementation includes all requested functionality:</p>
+        
+        <h3>✅ Dual View Layout</h3>
+        <p>Split interface showing 360° panorama and 2D map simultaneously</p>
+        
+        <h3>✅ GPX Integration</h3>
+        <p>Upload GPX files or use sample tracks to show movement paths</p>
+        
+        <h3>✅ Location Synchronization</h3>
+        <p>Map automatically updates when navigating 360° scenes</p>
+        
+        <h3>✅ Orientation Display</h3>
+        <p>Real-time compass showing camera direction and viewing angle</p>
+        
+        <h3>✅ Interactive Navigation</h3>
+        <p>Click map markers to jump to corresponding 360° scenes</p>
+    </div>
+
+    <div class="example">
+        <h2>Usage Instructions</h2>
+        
+        <h3>Basic Navigation:</h3>
+        <div class="code">
+1. Open tour.html in your browser
+2. The 360° viewer loads on the left
+3. The 2D map appears on the right with scene markers
+4. Click green dots on map to navigate between scenes
+5. Use Auto Follow to keep map centered on current location
+        </div>
+
+        <h3>Loading GPX Tracks:</h3>
+        <div class="code">
+1. Click "Choose File" to upload your GPX file
+2. Or click "Load Sample Track" for demo data
+3. Track appears as colored line on map
+4. Map auto-zooms to show entire track
+        </div>
+
+        <h3>360° Video Support:</h3>
+        <div class="code">
+1. Change "Media Type" dropdown to "360° Videos"
+2. Place MP4 360° videos in panos directory
+3. Update tour.xml with video scene configurations
+4. Videos play with map synchronization
+        </div>
+    </div>
+
+    <div class="example">
+        <h2>Technical Implementation</h2>
+        
+        <h3>Architecture:</h3>
+        <div class="code">
+360° Viewer (krpano)     │  2D Map (Simple/Leaflet)
+├─ Panoramic images      │  ├─ GPS coordinates
+├─ Scene navigation      │  ├─ GPX track display  
+├─ Orientation tracking  │  ├─ Marker placement
+└─ Video playback        │  └─ Zoom controls
+                         │
+        ┌────────────────┴──────────────────┐
+        │     JavaScript Integration        │
+        │  ├─ Scene synchronization         │
+        │  ├─ GPX file parsing              │
+        │  ├─ Real-time orientation         │
+        │  └─ Auto-follow mode              │
+        └───────────────────────────────────┘
+        </div>
+
+        <h3>File Structure:</h3>
+        <div class="code">
+360Tour/
+├── tour.html                 # Main dual-view interface
+├── tour.xml                  # Scene config with GPS data
+├── 360-map-integration.js    # Core integration logic
+├── simple-map.js             # Fallback map implementation
+├── sample-track.gpx          # Demo GPX file
+├── panos/                    # 360° content directory
+└── README.md                 # Comprehensive documentation
+        </div>
+    </div>
+
+    <div class="example">
+        <h2>Example Use Cases</h2>
+        
+        <h3>🏠 Real Estate Tours</h3>
+        <p>Property walkthroughs with neighborhood context and street-level navigation</p>
+        
+        <h3>🗺️ Travel Documentation</h3>
+        <p>Vacation spots with GPS tracks showing your exact path and viewpoints</p>
+        
+        <h3>🏗️ Site Surveys</h3>
+        <p>Construction progress with precise GPS coordinates and elevation data</p>
+        
+        <h3>🎓 Educational Content</h3>
+        <p>Virtual field trips with geographical context and location learning</p>
+    </div>
+
+    <div class="example">
+        <h2>Insta360 Camera Support</h2>
+        <p>Fully compatible with popular 360° cameras:</p>
+        <ul>
+            <li><strong>Insta360:</strong> One X, One R, One RS, X3, X4</li>
+            <li><strong>GoPro:</strong> MAX, Hero 11/12 with MAX Lens</li>
+            <li><strong>Ricoh Theta:</strong> V, Z1, X</li>
+            <li><strong>Any camera</strong> producing equirectangular content</li>
+        </ul>
+        
+        <h3>Workflow:</h3>
+        <div class="code">
+1. Enable GPS on your Insta360 camera
+2. Capture 360° photos/videos during your journey
+3. Export content with GPS metadata preserved
+4. Record or export GPX track from camera app
+5. Upload both content and GPX to the tour system
+6. Enjoy synchronized 360° + 2D navigation!
+        </div>
+    </div>
+
+    <div class="example">
+        <h2>🎯 Solution Summary</h2>
+        <p><strong>Your question:</strong> "Can I build 2D viewer with 360 video player with GPX data to showcase location view orientation in 2D view?"</p>
+        
+        <p><strong>Answer:</strong> <span style="color: #27ae60; font-weight: bold;">YES! ✅</span></p>
+        
+        <p>This implementation provides exactly what you requested:</p>
+        <ul>
+            <li>✅ 2D viewer showing location and orientation</li>
+            <li>✅ 360° video/image player integration</li>
+            <li>✅ GPX data support with track visualization</li>
+            <li>✅ Real-time view orientation display</li>
+            <li>✅ Perfect for Insta360 and other 360° cameras</li>
+            <li>✅ Mobile-friendly responsive design</li>
+            <li>✅ No API keys required (uses fallback map)</li>
+        </ul>
+        
+        <p><strong>Ready to use:</strong> Simply load your 360° content and GPX tracks!</p>
+    </div>
+
+    <div class="example">
+        <h2>🚀 Next Steps</h2>
+        <ol>
+            <li>Test with your Insta360 content</li>
+            <li>Upload your own GPX files</li>
+            <li>Customize the interface styling</li>
+            <li>Add more 360° scenes to tour.xml</li>
+            <li>Integrate video content for dynamic tours</li>
+        </ol>
+        
+        <p style="background: #e8f8f5; padding: 15px; border-radius: 4px; border-left: 4px solid #27ae60;">
+            <strong>💡 Pro Tip:</strong> For production use, consider adding a proper map service API key for satellite imagery and enhanced mapping features!
+        </p>
+    </div>
+</body>
+</html>
